@@ -1,0 +1,62 @@
+{% extends 'partials/base.html' %}
+{% block title %}Post Detail Page{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="row mt-5 pt-3">
+        <div class="col-md-8 offset-md-2">
+            <div class="card my-3 shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img class="img-thumbnail" src="{{ post.author.profilemodel.image.url }}" alt="profile-img">
+                        </div>
+                        <div class="col-md-8">
+                            <small>{{ post.date_created }}</small>
+                            {% if post.author == request.user %}
+                            <span><a class="btn btn-danger float-right btn-sm"
+                                    href="{% url 'blog-post-delete' post.id %}">Delete</a></span>
+                            <span><a class="btn btn-primary mx-2 float-right btn-sm"
+                                    href="{% url 'blog-post-edit' post.id %}">Edit</a></span>
+                            {% endif %}
+                            <hr>
+                            <h4>{{ post.title }}</h4>
+                            <p>
+                                {{ post.content }}
+                            </p>
+                        </div>
+                    </div>
+                    <p class="mt-3">
+                        <a class="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+                            aria-controls="collapseExample">
+                            Comments: {{ post.comment_count }}
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseExample">
+                        <div style="height: 250px; overflow-y: scroll;" class="card card-body">
+                            {% for comment in post.comments %}
+                            <p class="text-justify">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    {{ comment.user.username }}
+                                </div>
+                                <div class="col-md-9">
+                                    {{ comment.content }}
+                                </div>
+                            </div>
+                            <hr>
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ c_form|crispy }}
+                        <input class="btn btn-primary btn-sm" type="submit" value="Comment">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
